@@ -1,47 +1,58 @@
-const express = require('express');
-const path = require('path');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { GoogleGenAI } from '@google/genai';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 8080; // Securely handles Azure routing ports
+const PORT = process.env.PORT || 8080;
 
-// Middleware to process incoming requests
+// Middleware
 app.use(express.json());
+app.use(express.static(__dirname));
 
-// Points Express directly to your folder to load your dashboard
-app.use(express.static(path.join(__dirname, 'public')));
+// Initialize official Google Gen AI SDK
+// Azure automatically populates process.env.GEMINI_API_KEY from your App Configuration Settings
+const ai = new GoogleGenAI(); 
 
-// Secure backend API proxy endpoint
+// API endpoint to proxy chat requests securely
 app.post('/api/chat', async (req, res) => {
-    try {
-        const { message, context } = req.body;
-        const apiKey = process.env.GEMINI_API_KEY;
-        
-        if (!apiKey) {
-            return res.status(500).json({ error: "GEMINI_API_KEY is missing on Azure configurations." });
-        }
+  try {
+    const { prompt, contextText } = req.body;
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-        const systemContext = `You are a SOC Analyst Assistant called the Gemini AI Master. Context: ${context || 'None'}`;
-        const fullPrompt = `${systemContext}\n\nAnalyst Question: ${message}`;
-
-        const result = await model.generateContent(fullPrompt);
-        const response = await result.response;
-        
-        return res.json({ response: response.text() });
-    } catch (error) {
-        console.error("Server Error:", error);
-        return res.status(500).json({ error: error.message });
+    if (!prompt) {
+      return res.status(400).json({ error: 'Prompt is required.' });
     }
+
+    // Combine visual framework data context if provided
+    let fullPrompt = prompt;
+    if (contextText) {
+      fullPrompt = `Context information regarding the incident dashboard metrics:\n${contextText}\n\nAnalyst Query: ${prompt}`;
+    }
+
+    // Call Gemini 2.5 Flash for ultra-fast analytics reasoning
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: fullPrompt,
+    });
+
+    res.json({ text: response.text });
+  } catch (error) {
+    console.error('Error connecting to Gemini LLM Engine:', error);
+    res.status(500).json({ 
+      error: 'Failed to communicate with Gemini LLM proxy engine.',
+      details: error.message 
+    });
+  }
 });
 
-// Fallback to route all web traffic to your main dashboard page
+// Fallback to route all other requests to the main interface dashboard
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server is running securely on port ${PORT}`);
 });
