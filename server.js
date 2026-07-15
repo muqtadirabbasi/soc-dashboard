@@ -1,26 +1,36 @@
 const express = require('express');
 const path = require('path');
+// Ensure this import matches exactly at the top of your server.js
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const app = express();
-const PORT = process.env.PORT || 8080; // Azure dynamically maps the port using process.env.PORT
-
-// Middleware to parse incoming JSON payloads
-app.use(express.json());
-
-// Serve static assets out of the 'public' folder
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Secure backend API bridge endpoint to fetch LLM responses
+// Ensure your route initialization logic flows precisely like this:
 app.post('/api/chat', async (req, res) => {
     try {
         const { message, context } = req.body;
-        
-        // Grab the key securely injected by Azure's environment variables
         const apiKey = process.env.GEMINI_API_KEY;
+        
         if (!apiKey) {
-            return res.status(500).json({ error: "Configuration Error: GEMINI_API_KEY is not defined on the server." });
+            return res.status(500).json({ error: "GEMINI_API_KEY missing on Azure." });
         }
+
+        // Initialize the library
+        const genAI = new GoogleGenerativeAI(apiKey);
+        
+        // Use the standard stable text model identifier
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        const systemContext = `You are a SOC Analyst Assistant called the Gemini AI Master. Context: ${context || 'None'}`;
+        const fullPrompt = `${systemContext}\n\nAnalyst Question: ${message}`;
+
+        const result = await model.generateContent(fullPrompt);
+        const response = await result.response;
+        
+        return res.json({ response: response.text() });
+    } catch (error) {
+        console.error("Internal Server Crash:", error);
+        return res.status(500).json({ error: error.message });
+    }
+});
 
         // Initialize Google AI with the secure key
         const genAI = new GoogleGenerativeAI(apiKey);
