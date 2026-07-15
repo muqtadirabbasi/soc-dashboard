@@ -1,12 +1,16 @@
 {
-  "name": "soc-dashboard-azure",
+  "name": "insider-threat-intel-hub",
   "version": "1.0.0",
+  "type": "module",
   "main": "server.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "@google/generative-ai": "^0.1.1"
+    "@google/genai": "^0.1.1",
+    "express": "^4.19.2"
   }
 }
