@@ -1,7 +1,6 @@
 {
-  "name": "soc-dashboard-azure-backend",
+  "name": "soc-dashboard-azure",
   "version": "1.0.0",
-  "description": "Secure Azure Node.js Backend for SOC Gemini Dashboard",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
