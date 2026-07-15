@@ -1,5 +1,5 @@
 {
-  "name": "insider-threat-intel-hub",
+  "name": "insider-threat-hub",
   "version": "1.0.0",
   "type": "module",
   "main": "server.js",
