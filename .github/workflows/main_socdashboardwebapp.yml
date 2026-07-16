@@ -21,9 +21,9 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-
+        
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'YOUR_AZURE_WEBAPP_NAME' # <-- Double check this matches your Azure Web App name exactly
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_XXXXX }} # <-- Ensure this matches your secret name exactly
+              uses: azure/webapps-deploy@v3
+              with:
+                app-name: 'YOUR_AZURE_WEBAPP_NAME' # <-- Make sure this matches your Azure app name
+                publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }} # <-- Updated to match your new secret!
