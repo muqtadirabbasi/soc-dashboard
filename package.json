@@ -1,13 +1,11 @@
 {
-  "name": "azure-gemini-app",
+  "name": "soc-dashboard",
   "version": "1.0.0",
-  "description": "Gemini-powered web app on Azure",
+  "description": "SOC Anomaly Dashboard powered by Gemini",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "echo 'No build step required for this app'"
-  },
-    "start": "node server.js"
+    "build": "echo 'No build required'"
   },
   "dependencies": {
     "@google/genai": "^0.1.1",
