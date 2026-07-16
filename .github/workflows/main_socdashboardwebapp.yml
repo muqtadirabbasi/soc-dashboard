@@ -18,8 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Updated setup-node from @v3 to @v4 to support Node.js 24 natively
       - name: Set up Node.js version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '24.x'
 
@@ -62,4 +63,3 @@ jobs:
           app-name: 'socdashboardwebapp'
           slot-name: 'Production'
           package: .
-          
