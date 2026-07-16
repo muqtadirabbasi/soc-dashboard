@@ -1,12 +1,13 @@
 {
-  "name": "azure-web-app",
+  "name": "azure-gemini-app",
   "version": "1.0.0",
-  "description": "Simple web app for Azure App Service",
+  "description": "Gemini-powered web app on Azure",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
+    "@google/genai": "^0.1.1",
     "express": "^4.19.2"
   }
 }
