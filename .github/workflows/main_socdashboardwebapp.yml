@@ -22,15 +22,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24.x'
-          cache: 'npm' # Automatically caches dependencies to speed up builds
+          # Caching removed to prevent the "Dependencies lock file is not found" error
 
       - name: Install dependencies
-        run: npm  install
+        run: npm install
 
       - name: Build application
         run: npm run build --if-present
         env:
-          CI: false # Prevents warnings (like ESLint) from being treated as fatal build errors
+          CI: false # Prevents linter warnings from triggering a fatal build failure
 
       - name: Run tests
         run: npm run test --if-present
